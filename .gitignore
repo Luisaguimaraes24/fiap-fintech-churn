@@ -1,1 +1,8 @@
 mlruns/\n__pycache__/\n*.pyc\n.env\n
+.venv/
+mlruns/
+mlflow.db
+logs/
+data/
+__pycache__/
+*.pyc
