@@ -3,6 +3,7 @@ from sklearn.metrics import (
     recall_score, precision_score
 )
 
+
 def compute_metrics(model, X_test, y_test):
     y_pred = model.predict(X_test)
     return {

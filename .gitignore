@@ -1,6 +1,1 @@
-mlruns/
-__pycache__/
-*.pyc
-.env
-data/raw/
-.venv/
+mlruns/\n__pycache__/\n*.pyc\n.env\n

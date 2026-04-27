@@ -1,22 +1,58 @@
 {
-    "model_name": "ChurnModel v1",
-    "uso_pretendido": "Previsão de churn de clientes para ação preventiva",
-    "atributos_sensiveis": ["genero", "localidade"],
-    "limitacoes": [
-      "Treinado com dados históricos",
-      "Não usar como único critério de decisão"
-    ],
-    "metricas_gerais": {
-      "accuracy": 0.87,
-      "f1_score": 0.84,
-      "recall": 0.82,
-      "precision": 0.86
-    },
-    "metricas_por_grupo": {
-      "genero": {
-        "M": {"recall": 0.83, "precision": 0.87},
-        "F": {"recall": 0.81, "precision": 0.85}
+  "model_name": "ChurnModel v1",
+  "uso_pretendido": "Previsão de churn de clientes para ação preventiva de retenção",
+  "atributos_sensiveis_auditados": [
+    "Sexo",
+    "Regiao (Norte/Nordeste/Centro-Oeste/Sudeste/Sul)"
+  ],
+  "atributos_sensiveis_excluidos_do_modelo": true,
+  "metodologia_auditoria": "UFs agrupadas por região geográfica para garantir significância estatística. Grupos com menos de 3 amostras positivas no conjunto de teste são excluídos. Métrica de disparidade: diferença máxima de recall entre grupos (threshold: 15%).",
+  "limitacoes": [
+    "Treinado com dados históricos — pode não refletir perfis futuros",
+    "Não usar como único critério de decisão de relacionamento com o cliente",
+    "Auditoria regional — variações intra-regionais por estado não são capturadas"
+  ],
+  "metricas_gerais": {
+    "accuracy": 0.9604,
+    "f1_score": 0.962,
+    "recall": 0.9345,
+    "precision": 0.9911
+  },
+  "auditoria_fairness": {
+    "Sexo": {
+      "disparidade_recall": 0.0217,
+      "status": "aprovado",
+      "por_grupo": {
+        "recall": {
+          "Feminino": 0.9457,
+          "Masculino": 0.9241
+        },
+        "precision": {
+          "Feminino": 0.9879,
+          "Masculino": 0.9942
+        }
       }
     },
-    "lgpd": "Modelo auditado. Atributos sensíveis não usados como features."
-  }
+    "Regiao": {
+      "disparidade_recall": 0.0294,
+      "status": "aprovado",
+      "por_grupo": {
+        "recall": {
+          "Centro-Oeste": 0.9358,
+          "Nordeste": 0.9282,
+          "Norte": 0.9483,
+          "Sudeste": 0.9389,
+          "Sul": 0.9189
+        },
+        "precision": {
+          "Centro-Oeste": 0.9903,
+          "Nordeste": 0.9767,
+          "Norte": 1.0,
+          "Sudeste": 0.9945,
+          "Sul": 0.9927
+        }
+      }
+    }
+  },
+  "lgpd": "Atributos sensíveis (Sexo, UF) não utilizados como features do modelo."
+}
