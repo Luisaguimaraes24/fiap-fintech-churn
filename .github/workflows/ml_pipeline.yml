@@ -71,7 +71,10 @@ jobs:
           test "$STATUS" = "ok" && echo "Health OK" || (echo "FALHOU: $STATUS" && exit 1)
       - name: Teste predict
         run: |
-          CHURN=$(curl -s -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"Idade":63,"RendaMensal":3200.0,"PercentualUtilizacaoLimite":85.0,"QtdTransacoesNegadas":8,"AnosDeRelacionamentoBanco":2,"JaUsouChequeEspecial":1,"QtdEmprestimos":0,"NumeroAtendimentos":15,"TMA":87,"IndiceSatisfacao":2,"Saldo":9936.0,"CLTV":66,"CanalPref":"Email"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['churn'])")
+          CHURN=$(curl -s -X POST http://localhost:8000/predict \
+            -H "Content-Type: application/json" \
+            -d '{"Idade":63,"RendaMensal":3200.0,"PercentualUtilizacaoLimite":85.0,"QtdTransacoesNegadas":8,"AnosDeRelacionamentoBanco":2,"JaUsouChequeEspecial":1,"QtdEmprestimos":0,"NumeroAtendimentos":15,"TMA":87,"IndiceSatisfacao":2,"Saldo":9936.0,"CLTV":66,"CanalPref":"Email"}' \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['churn'])")
           test "$CHURN" = "1" && echo "Predict OK" || (echo "FALHOU churn=$CHURN" && exit 1)
       - name: Parar container
         if: always()
