@@ -1,0 +1,22 @@
+{
+    "model_name": "ChurnModel v1",
+    "uso_pretendido": "Previsão de churn de clientes para ação preventiva",
+    "atributos_sensiveis": ["genero", "localidade"],
+    "limitacoes": [
+      "Treinado com dados históricos",
+      "Não usar como único critério de decisão"
+    ],
+    "metricas_gerais": {
+      "accuracy": 0.87,
+      "f1_score": 0.84,
+      "recall": 0.82,
+      "precision": 0.86
+    },
+    "metricas_por_grupo": {
+      "genero": {
+        "M": {"recall": 0.83, "precision": 0.87},
+        "F": {"recall": 0.81, "precision": 0.85}
+      }
+    },
+    "lgpd": "Modelo auditado. Atributos sensíveis não usados como features."
+  }

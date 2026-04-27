@@ -1,0 +1,61 @@
+name: ML Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-assurance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -r requirements.txt
+      - run: flake8 src/ --max-line-length=100
+      - run: pytest tests/ -v
+
+  training-and-evaluation:
+    needs: quality-assurance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -r requirements.txt
+      - run: python src/train.py
+      - name: Checar métricas mínimas
+        run: |
+          python - <<'EOF'
+          import json, sys
+          with open("metrics.json") as f:
+              m = json.load(f)
+          if m["accuracy"] < 0.80:
+              print("BLOQUEADO: accuracy abaixo do limiar")
+              sys.exit(1)
+          EOF
+      - run: python src/governance.py
+
+  model-registration:
+    needs: training-and-evaluation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install -r requirements.txt
+      - name: Registrar modelo como Staging
+        run: |
+          python - <<'EOF'
+          import mlflow
+          client = mlflow.MlflowClient()
+          latest = client.get_latest_versions("ChurnModel")[0]
+          client.transition_model_version_stage(
+              name="ChurnModel",
+              version=latest.version,
+              stage="Staging"
+          )
+          print(f"Modelo v{latest.version} → Staging")
+          EOF
